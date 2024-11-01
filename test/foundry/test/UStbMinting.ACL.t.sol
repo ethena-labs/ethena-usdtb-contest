@@ -4,10 +4,10 @@ pragma solidity ^0.8.20;
 /* solhint-disable func-name-mixedcase  */
 
 import "../UStbMinting.utils.sol";
-import "../../../../contracts/ustb/IUStbMinting.sol";
-import "../../../../contracts/interfaces/ISingleAdminAccessControl.sol";
+import "../../../contracts/ustb/IUStbMinting.sol";
+import "../../../contracts/interfaces/ISingleAdminAccessControl.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "../../../../contracts/ustb/IUStbMinting.sol";
+import "../../../contracts/ustb/IUStbMinting.sol";
 
 contract UStbMintingACLTest is UStbMintingUtils {
   function setUp() public override {

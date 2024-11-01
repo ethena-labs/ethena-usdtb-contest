@@ -9,8 +9,8 @@ import {console} from "forge-std/console.sol";
 import "forge-std/Test.sol";
 import {SigUtils} from "../utils/SigUtils.sol";
 
-import "../../../contracts/ustb/UStb.sol";
-import "../../../contracts/ustb/IUStbDefinitions.sol";
+import "../../contracts/ustb/UStb.sol";
+import "../../contracts/ustb/IUStbDefinitions.sol";
 import {UStbBaseSetup} from "./UStbBaseSetup.sol";
 
 contract UStbTransferTest is UStbBaseSetup {
@@ -1489,8 +1489,6 @@ contract UStbTransferTest is UStbBaseSetup {
     }
 
     function testRedistributeLockedAmountNotBlacklistedFromFails() public {
-        uint256 aliceBalance = UStbContract.balanceOf(alice);
-        uint256 bobBalance = UStbContract.balanceOf(bob);
         vm.startPrank(newOwner);
         vm.expectRevert(IUStbDefinitions.OperationNotAllowed.selector);
         UStbContract.redistributeLockedAmount(alice, bob);
@@ -1498,8 +1496,6 @@ contract UStbTransferTest is UStbBaseSetup {
     }
 
     function testRedistributeLockedAmountBlacklistedToFails() public {
-        uint256 aliceBalance = UStbContract.balanceOf(alice);
-        uint256 bobBalance = UStbContract.balanceOf(bob);
         vm.startPrank(newOwner);
         UStbContract.grantRole(BLACKLISTED_ROLE, bob);
         vm.expectRevert(IUStbDefinitions.OperationNotAllowed.selector);

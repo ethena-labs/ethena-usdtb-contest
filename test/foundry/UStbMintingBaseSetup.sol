@@ -9,17 +9,17 @@ import {stdStorage, StdStorage, Test} from "forge-std/Test.sol";
 import {SigUtils} from "../utils/SigUtils.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {Utils} from "../utils/Utils.sol";
-import {Upgrades} from "../../../contracts/lib/Upgrades.sol";
+import {Upgrades} from "../../contracts/lib/Upgrades.sol";
 
-import "../../../contracts/mock/MockToken.sol";
-import "../../../contracts/ustb/UStb.sol";
-import "../../../contracts/ustb/IUStbMinting.sol";
-import "../../../contracts/ustb/IUStbMintingEvents.sol";
-import "../../../contracts/ustb/UStbMinting.sol";
-import "../../../contracts/interfaces/ISingleAdminAccessControl.sol";
-import "../../../contracts/ustb/IUStbDefinitions.sol";
-import "../../../contracts/mock/MockMultisigWallet.sol";
-import "../../../contracts/ustb/IUStbDefinitions.sol";
+import "../../contracts/mock/MockToken.sol";
+import "../../contracts/ustb/UStb.sol";
+import "../../contracts/ustb/IUStbMinting.sol";
+import "../../contracts/ustb/IUStbMintingEvents.sol";
+import "../../contracts/ustb/UStbMinting.sol";
+import "../../contracts/interfaces/ISingleAdminAccessControl.sol";
+import "../../contracts/ustb/IUStbDefinitions.sol";
+import "../../contracts/mock/MockMultisigWallet.sol";
+import "../../contracts/ustb/IUStbDefinitions.sol";
 
 contract UStbMintingBaseSetup is Test, IUStbMintingEvents, IUStbDefinitions {
     Utils internal utils;

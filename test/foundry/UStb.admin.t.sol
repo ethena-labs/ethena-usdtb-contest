@@ -9,8 +9,8 @@ import {console} from "forge-std/console.sol";
 import "forge-std/Test.sol";
 import {SigUtils} from "../utils/SigUtils.sol";
 
-import "../../../contracts/ustb/UStb.sol";
-import "../../../contracts/ustb/IUStbDefinitions.sol";
+import "../../contracts/ustb/UStb.sol";
+import "../../contracts/ustb/IUStbDefinitions.sol";
 import {UStbBaseSetup} from "./UStbBaseSetup.sol";
 
 contract UStbTest is UStbBaseSetup {

@@ -8,18 +8,17 @@ pragma solidity 0.8.26;
 import {stdStorage, StdStorage, Test} from "forge-std/Test.sol";
 import {Vm} from "forge-std/Vm.sol";
 
-// import "../../../contracts/mock/MockToken.sol";
-import "../../../contracts/interfaces/ISingleAdminAccessControl.sol";
+import "../../contracts/interfaces/ISingleAdminAccessControl.sol";
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 import "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 
-import {Upgrades} from "../../../contracts/lib/Upgrades.sol";
-import {UStb} from "../../../contracts/ustb/UStb.sol";
-import {IUStb} from "../../../contracts/ustb/IUStb.sol";
+import {Upgrades} from "../../contracts/lib/Upgrades.sol";
+import {UStb} from "../../contracts/ustb/UStb.sol";
+import {IUStb} from "../../contracts/ustb/IUStb.sol";
 
-import "../../../test/utils/SigUtils.sol";
+import "../../test/utils/SigUtils.sol";
 
 
 contract UStbBaseSetup is Test {
