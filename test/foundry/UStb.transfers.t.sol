@@ -1427,7 +1427,7 @@ contract UStbTransferTest is UStbBaseSetup {
     UStbContract.transferFrom(bob, greg, _transferAmount);
   }
 
-  //Whitelist transfer enabeld only - Whitelist bob and greg. transfer from bob to greg
+  //Whitelist transfer enabled only - Whitelist bob and greg. transfer from bob to greg
   function testTransferStateWhitelistEnabledPass() public {
     vm.startPrank(newOwner);
     UStbContract.updateTransferState(IUStbDefinitions.TransferState.WHITELIST_ENABLED);
