@@ -2,10 +2,10 @@
 
 Contracts in scope:
 
-1) `contracts/contracts/SingleAdminAccessControl.sol`
-2) `contracts/contracts/SingleAdminAccessControlUpgradeable.sol`
-3) `contracts/contracts/ustb/UStb.sol`
-4) `contracts/contracts/ustb/UStbMinting.sol`
+1) `contracts/SingleAdminAccessControl.sol`
+2) `contracts/SingleAdminAccessControlUpgradeable.sol`
+3) `contracts/ustb/UStb.sol`
+4) `contracts/ustb/UStbMinting.sol`
 
 ## UStb token features
 
