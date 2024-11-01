@@ -38,8 +38,7 @@ contract UStbMintingDelegateTest is UStbMintingUtils {
       "The delegation status should be accepted"
     );
 
-    IUStbMinting.Signature memory trader2Sig =
-      signOrder(trader2PrivateKey, digest1, IUStbMinting.SignatureType.EIP712);
+    IUStbMinting.Signature memory trader2Sig = signOrder(trader2PrivateKey, digest1, IUStbMinting.SignatureType.EIP712);
 
     assertEq(
       stETHToken.balanceOf(address(UStbMintingContract)), 0, "Mismatch in Minting contract stETH balance before mint"
@@ -71,8 +70,7 @@ contract UStbMintingDelegateTest is UStbMintingUtils {
     UStbMintingContract.confirmDelegatedSigner(benefactor);
 
     vm.prank(trader2);
-    IUStbMinting.Signature memory trader2Sig =
-      signOrder(trader2PrivateKey, digest1, IUStbMinting.SignatureType.EIP712);
+    IUStbMinting.Signature memory trader2Sig = signOrder(trader2PrivateKey, digest1, IUStbMinting.SignatureType.EIP712);
 
     assertEq(
       stETHToken.balanceOf(address(UStbMintingContract)), 0, "Mismatch in Minting contract stETH balance before mint"
@@ -127,8 +125,7 @@ contract UStbMintingDelegateTest is UStbMintingUtils {
       "The delegation status should be accepted"
     );
 
-    IUStbMinting.Signature memory trader2Sig =
-      signOrder(trader2PrivateKey, digest1, IUStbMinting.SignatureType.EIP712);
+    IUStbMinting.Signature memory trader2Sig = signOrder(trader2PrivateKey, digest1, IUStbMinting.SignatureType.EIP712);
 
     assertEq(
       stETHToken.balanceOf(address(UStbMintingContract)),
@@ -153,8 +150,7 @@ contract UStbMintingDelegateTest is UStbMintingUtils {
 
     bytes32 digest1 = UStbMintingContract.hashOrder(order);
     vm.prank(trader2);
-    IUStbMinting.Signature memory trader2Sig =
-      signOrder(trader2PrivateKey, digest1, IUStbMinting.SignatureType.EIP712);
+    IUStbMinting.Signature memory trader2Sig = signOrder(trader2PrivateKey, digest1, IUStbMinting.SignatureType.EIP712);
 
     assertEq(
       stETHToken.balanceOf(address(UStbMintingContract)),
@@ -226,8 +222,7 @@ contract UStbMintingDelegateTest is UStbMintingUtils {
 
     bytes32 digest1 = UStbMintingContract.hashOrder(order);
     vm.prank(trader2);
-    IUStbMinting.Signature memory trader2Sig =
-      signOrder(trader2PrivateKey, digest1, IUStbMinting.SignatureType.EIP712);
+    IUStbMinting.Signature memory trader2Sig = signOrder(trader2PrivateKey, digest1, IUStbMinting.SignatureType.EIP712);
 
     assertEq(
       stETHToken.balanceOf(address(UStbMintingContract)), 0, "Mismatch in Minting contract stETH balance before mint"

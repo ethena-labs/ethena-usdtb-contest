@@ -30,11 +30,8 @@ contract UStbMintingACLTest is UStbMintingUtils {
   }
 
   function test_fuzz_notMinter_cannot_mint(address nonMinter) public {
-    (
-      IUStbMinting.Order memory mintOrder,
-      IUStbMinting.Signature memory takerSignature,
-      IUStbMinting.Route memory route
-    ) = mint_setup(_ustbToMint, _stETHToDeposit, stETHToken, 1, false);
+    (IUStbMinting.Order memory mintOrder, IUStbMinting.Signature memory takerSignature, IUStbMinting.Route memory route)
+    = mint_setup(_ustbToMint, _stETHToDeposit, stETHToken, 1, false);
 
     vm.assume(nonMinter != minter);
     vm.startPrank(nonMinter);
@@ -245,11 +242,8 @@ contract UStbMintingACLTest is UStbMintingUtils {
     vm.startPrank(gatekeeper);
     UStbMintingContract.disableMintRedeem();
 
-    (
-      IUStbMinting.Order memory order,
-      IUStbMinting.Signature memory takerSignature,
-      IUStbMinting.Route memory route
-    ) = mint_setup(_ustbToMint, _stETHToDeposit, stETHToken, 1, false);
+    (IUStbMinting.Order memory order, IUStbMinting.Signature memory takerSignature, IUStbMinting.Route memory route) =
+      mint_setup(_ustbToMint, _stETHToDeposit, stETHToken, 1, false);
 
     vm.prank(minter);
     vm.expectRevert(GlobalMaxMintPerBlockExceeded);
@@ -720,9 +714,8 @@ contract UStbMintingACLTest is UStbMintingUtils {
   }
 
   function testCorrectInitConfig() public {
-    UStbMinting ustbMinting2 =
-      new UStbMinting(assets, tokenConfig, globalConfig, custodians, randomer);
-    
+    UStbMinting ustbMinting2 = new UStbMinting(assets, tokenConfig, globalConfig, custodians, randomer);
+
     assertFalse(ustbMinting2.hasRole(adminRole, owner));
     assertNotEq(ustbMinting2.owner(), owner);
     assertTrue(ustbMinting2.hasRole(adminRole, randomer));
@@ -744,9 +737,7 @@ contract UStbMintingACLTest is UStbMintingUtils {
     invalidRedeemTokenConfig[0] = IUStbMinting.TokenConfig(IUStbMinting.TokenType.ASSET, true, 1, 1);
 
     vm.expectRevert(InvalidAssetAddress);
-    new UStbMinting(
-      assets, invalidRedeemTokenConfig, globalConfig, custodians, randomer
-    );
+    new UStbMinting(assets, invalidRedeemTokenConfig, globalConfig, custodians, randomer);
 
     // correct config
     new UStbMinting(assets, tokenConfig, globalConfig, custodians, randomer);

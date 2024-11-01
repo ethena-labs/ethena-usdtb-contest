@@ -16,11 +16,8 @@ contract UStbMintingBlockLimitsTest is UStbMintingUtils {
     uint128 maxMintAmount = tokenConfig[0].maxMintPerBlock;
     uint128 firstMintAmount = maxMintAmount / 4;
     uint128 secondMintAmount = maxMintAmount / 2;
-    (
-      IUStbMinting.Order memory aOrder,
-      IUStbMinting.Signature memory aTakerSignature,
-      IUStbMinting.Route memory aRoute
-    ) = mint_setup(firstMintAmount, _stETHToDeposit, stETHToken, 1, false);
+    (IUStbMinting.Order memory aOrder, IUStbMinting.Signature memory aTakerSignature, IUStbMinting.Route memory aRoute)
+    = mint_setup(firstMintAmount, _stETHToDeposit, stETHToken, 1, false);
 
     vm.prank(minter);
     UStbMintingContract.mint(aOrder, aRoute, aTakerSignature);
@@ -28,11 +25,8 @@ contract UStbMintingBlockLimitsTest is UStbMintingUtils {
     vm.prank(owner);
     stETHToken.mint(_stETHToDeposit, benefactor);
 
-    (
-      IUStbMinting.Order memory bOrder,
-      IUStbMinting.Signature memory bTakerSignature,
-      IUStbMinting.Route memory bRoute
-    ) = mint_setup(secondMintAmount, _stETHToDeposit, stETHToken, 2, true);
+    (IUStbMinting.Order memory bOrder, IUStbMinting.Signature memory bTakerSignature, IUStbMinting.Route memory bRoute)
+    = mint_setup(secondMintAmount, _stETHToDeposit, stETHToken, 2, true);
 
     vm.prank(minter);
     UStbMintingContract.mint(bOrder, bRoute, bTakerSignature);
@@ -52,11 +46,8 @@ contract UStbMintingBlockLimitsTest is UStbMintingUtils {
 
   function test_fuzz_mint_maxMint_perBlock_exceeded_revert(uint128 excessiveMintAmount) public {
     vm.assume(excessiveMintAmount > tokenConfig[0].maxMintPerBlock);
-    (
-      IUStbMinting.Order memory mintOrder,
-      IUStbMinting.Signature memory takerSignature,
-      IUStbMinting.Route memory route
-    ) = mint_setup(excessiveMintAmount, _stETHToDeposit, stETHToken, 1, false);
+    (IUStbMinting.Order memory mintOrder, IUStbMinting.Signature memory takerSignature, IUStbMinting.Route memory route)
+    = mint_setup(excessiveMintAmount, _stETHToDeposit, stETHToken, 1, false);
 
     // maker
     vm.startPrank(minter);
@@ -77,11 +68,8 @@ contract UStbMintingBlockLimitsTest is UStbMintingUtils {
 
   function test_fuzz_nextBlock_mint_is_zero(uint128 mintAmount) public {
     vm.assume(mintAmount < tokenConfig[0].maxMintPerBlock && mintAmount > 0);
-    (
-      IUStbMinting.Order memory order,
-      IUStbMinting.Signature memory takerSignature,
-      IUStbMinting.Route memory route
-    ) = mint_setup(_ustbToMint, _stETHToDeposit, stETHToken, 1, false);
+    (IUStbMinting.Order memory order, IUStbMinting.Signature memory takerSignature, IUStbMinting.Route memory route) =
+      mint_setup(_ustbToMint, _stETHToDeposit, stETHToken, 1, false);
 
     vm.prank(minter);
     UStbMintingContract.mint(order, route, takerSignature);
@@ -112,11 +100,8 @@ contract UStbMintingBlockLimitsTest is UStbMintingUtils {
   function test_global_mint_limit_versus_local_perBlock() public {
     uint128 maxMintAmount = tokenConfig[0].maxMintPerBlock;
     uint128 firstMintAmount = maxMintAmount / 4;
-    (
-      IUStbMinting.Order memory aOrder,
-      IUStbMinting.Signature memory aTakerSignature,
-      IUStbMinting.Route memory aRoute
-    ) = mint_setup(firstMintAmount, _stETHToDeposit, stETHToken, 1, false);
+    (IUStbMinting.Order memory aOrder, IUStbMinting.Signature memory aTakerSignature, IUStbMinting.Route memory aRoute)
+    = mint_setup(firstMintAmount, _stETHToDeposit, stETHToken, 1, false);
 
     vm.startPrank(owner);
     stETHToken.mint(_stETHToDeposit, benefactor);

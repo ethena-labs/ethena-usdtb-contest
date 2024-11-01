@@ -12,9 +12,13 @@ import "./IUStbDefinitions.sol";
  * @title UStb
  * @notice UStb rwa token contract
  */
-
-contract UStb is ERC20BurnableUpgradeable, ERC20PermitUpgradeable, IUStbDefinitions, ReentrancyGuardUpgradeable, SingleAdminAccessControlUpgradeable {
-
+contract UStb is
+  ERC20BurnableUpgradeable,
+  ERC20PermitUpgradeable,
+  IUStbDefinitions,
+  ReentrancyGuardUpgradeable,
+  SingleAdminAccessControlUpgradeable
+{
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
   /// @notice The role is allowed to mint UStb. To be pointed to UStb minting contract only.
@@ -29,7 +33,7 @@ contract UStb is ERC20BurnableUpgradeable, ERC20PermitUpgradeable, IUStbDefiniti
   bytes32 public constant WHITELISTED_ROLE = keccak256("WHITELISTED_ROLE");
 
   TransferState public transferState;
-  
+
   /// @custom:oz-upgrades-unsafe-allow constructor
   constructor() {
     _disableInitializers();
@@ -63,9 +67,9 @@ contract UStb is ERC20BurnableUpgradeable, ERC20PermitUpgradeable, IUStbDefiniti
   }
 
   /**
-  * @param users List of address to be blacklisted
-  * @notice It is deemed acceptable for admin or access manager roles to be blacklisted accidentally since it does not affect operations.
-  */
+   * @param users List of address to be blacklisted
+   * @notice It is deemed acceptable for admin or access manager roles to be blacklisted accidentally since it does not affect operations.
+   */
   function addBlacklistAddress(address[] calldata users) external onlyRole(BLACKLIST_MANAGER_ROLE) {
     for (uint8 i = 0; i < users.length; i++) {
       _grantRole(BLACKLISTED_ROLE, users[i]);
@@ -73,8 +77,8 @@ contract UStb is ERC20BurnableUpgradeable, ERC20PermitUpgradeable, IUStbDefiniti
   }
 
   /**
-  * @param users List of address to be removed from blacklist
-  */  
+   * @param users List of address to be removed from blacklist
+   */
   function removeBlacklistAddress(address[] calldata users) external onlyRole(BLACKLIST_MANAGER_ROLE) {
     for (uint8 i = 0; i < users.length; i++) {
       _revokeRole(BLACKLISTED_ROLE, users[i]);
@@ -82,8 +86,8 @@ contract UStb is ERC20BurnableUpgradeable, ERC20PermitUpgradeable, IUStbDefiniti
   }
 
   /**
-  * @param users List of address to be whitelist
-  */
+   * @param users List of address to be whitelist
+   */
   function addWhitelistAddress(address[] calldata users) external onlyRole(WHITELIST_MANAGER_ROLE) {
     for (uint8 i = 0; i < users.length; i++) {
       _grantRole(WHITELISTED_ROLE, users[i]);
@@ -91,8 +95,8 @@ contract UStb is ERC20BurnableUpgradeable, ERC20PermitUpgradeable, IUStbDefiniti
   }
 
   /**
-  * @param users List of address to be removed from whitelist
-  */  
+   * @param users List of address to be removed from whitelist
+   */
   function removeWhitelistAddress(address[] calldata users) external onlyRole(WHITELIST_MANAGER_ROLE) {
     for (uint8 i = 0; i < users.length; i++) {
       _revokeRole(WHITELISTED_ROLE, users[i]);
@@ -138,7 +142,7 @@ contract UStb is ERC20BurnableUpgradeable, ERC20PermitUpgradeable, IUStbDefiniti
 
   /**
    * @dev Remove renounce role access from AccessControl, to prevent users to resign roles.
-   * @notice It's deemed preferable security-wise to ensure the contract maintains an owner, 
+   * @notice It's deemed preferable security-wise to ensure the contract maintains an owner,
    * over the ability to renounce roles, role renunciation can be achieved via owner revoking the role.
    */
   function renounceRole(bytes32, address) public virtual override {
@@ -147,7 +151,7 @@ contract UStb is ERC20BurnableUpgradeable, ERC20PermitUpgradeable, IUStbDefiniti
 
   /**
    * @param code Admin can disable all transfers, allow limited addresses only, or fully enable transfers
-   */  
+   */
   function updateTransferState(TransferState code) external onlyRole(DEFAULT_ADMIN_ROLE) {
     TransferState prevState = transferState;
     transferState = code;
@@ -165,12 +169,14 @@ contract UStb is ERC20BurnableUpgradeable, ERC20PermitUpgradeable, IUStbDefiniti
         // redistributing - burn
       } else if (hasRole(DEFAULT_ADMIN_ROLE, msg.sender) && from == address(0) && !hasRole(BLACKLISTED_ROLE, to)) {
         // redistributing - mint
-      } else if (!hasRole(BLACKLISTED_ROLE, msg.sender) && !hasRole(BLACKLISTED_ROLE, from) && !hasRole(BLACKLISTED_ROLE, to)) {
+      } else if (
+        !hasRole(BLACKLISTED_ROLE, msg.sender) && !hasRole(BLACKLISTED_ROLE, from) && !hasRole(BLACKLISTED_ROLE, to)
+      ) {
         // normal case
       } else {
         revert OperationNotAllowed();
       }
-    // State 1 - Transfers only enabled between whitelisted addresses
+      // State 1 - Transfers only enabled between whitelisted addresses
     } else if (transferState == TransferState.WHITELIST_ENABLED) {
       if (hasRole(MINTER_CONTRACT, msg.sender) && !hasRole(BLACKLISTED_ROLE, from) && to == address(0)) {
         // redeeming
@@ -182,15 +188,18 @@ contract UStb is ERC20BurnableUpgradeable, ERC20PermitUpgradeable, IUStbDefiniti
         // redistributing - mint
       } else if (hasRole(WHITELISTED_ROLE, msg.sender) && hasRole(WHITELISTED_ROLE, from) && to == address(0)) {
         // whitelisted user can burn
-      } else if (hasRole(WHITELISTED_ROLE, msg.sender) && hasRole(WHITELISTED_ROLE, from) && hasRole(WHITELISTED_ROLE, to) && !hasRole(BLACKLISTED_ROLE, msg.sender) && !hasRole(BLACKLISTED_ROLE, from) && !hasRole(BLACKLISTED_ROLE, to)) {
+      } else if (
+        hasRole(WHITELISTED_ROLE, msg.sender) && hasRole(WHITELISTED_ROLE, from) && hasRole(WHITELISTED_ROLE, to)
+          && !hasRole(BLACKLISTED_ROLE, msg.sender) && !hasRole(BLACKLISTED_ROLE, from) && !hasRole(BLACKLISTED_ROLE, to)
+      ) {
         // n.b. an address can be whitelisted and blacklisted at the same time
         // normal case
       } else {
         revert OperationNotAllowed();
       }
-    // State 0 - Fully disabled transfers
+      // State 0 - Fully disabled transfers
     } else if (transferState == TransferState.FULLY_DISABLED) {
       revert OperationNotAllowed();
-    } 
+    }
   }
 }

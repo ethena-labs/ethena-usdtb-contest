@@ -65,11 +65,8 @@ contract UStbMintingStableRatiosTest is UStbMintingUtils {
     uint128 usdtAmountAtUpperLimit = 1010 * 10 ** 6; // 100 bps above the USDT amount that should be at the upper bps limit
     uint128 usdtAmountAtLowerLimit = 990 * 10 ** 6; // 100 bps below the USDT amount that should be at the lower bps limit
 
-    (
-      IUStbMinting.Order memory orderLow,
-      IUStbMinting.Signature memory signatureLow,
-      IUStbMinting.Route memory routeLow
-    ) = mint_setup(ustbAmount, usdtAmountAtLowerLimit, USDTToken, 1, true);
+    (IUStbMinting.Order memory orderLow, IUStbMinting.Signature memory signatureLow, IUStbMinting.Route memory routeLow)
+    = mint_setup(ustbAmount, usdtAmountAtLowerLimit, USDTToken, 1, true);
     vm.prank(minter);
     UStbMintingContract.mint(orderLow, routeLow, signatureLow);
 
@@ -95,21 +92,15 @@ contract UStbMintingStableRatiosTest is UStbMintingUtils {
 
     uint128 ustbAmount = 1000 * 10 ** 18; // 1,000 UStb
     uint128 collateralGreaterBreachStableLimit = 1011 * 10 ** 6;
-    (
-      IUStbMinting.Order memory aOrder,
-      IUStbMinting.Signature memory aTakerSignature,
-      IUStbMinting.Route memory aRoute
-    ) = mint_setup(ustbAmount, collateralGreaterBreachStableLimit, USDTToken, 1, true);
+    (IUStbMinting.Order memory aOrder, IUStbMinting.Signature memory aTakerSignature, IUStbMinting.Route memory aRoute)
+    = mint_setup(ustbAmount, collateralGreaterBreachStableLimit, USDTToken, 1, true);
 
     vm.prank(minter);
     UStbMintingContract.mint(aOrder, aRoute, aTakerSignature);
 
     uint128 collateralLessThanBreachesStableLimit = 989 * 10 ** 6;
-    (
-      IUStbMinting.Order memory bOrder,
-      IUStbMinting.Signature memory bTakerSignature,
-      IUStbMinting.Route memory bRoute
-    ) = mint_setup(ustbAmount, collateralLessThanBreachesStableLimit, USDTToken, 2, true);
+    (IUStbMinting.Order memory bOrder, IUStbMinting.Signature memory bTakerSignature, IUStbMinting.Route memory bRoute)
+    = mint_setup(ustbAmount, collateralLessThanBreachesStableLimit, USDTToken, 2, true);
 
     vm.expectRevert(InvalidStablePrice);
     vm.prank(minter);

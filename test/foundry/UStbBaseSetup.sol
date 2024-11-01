@@ -20,7 +20,6 @@ import {IUStb} from "../../contracts/ustb/IUStb.sol";
 
 import "../../test/utils/SigUtils.sol";
 
-
 contract UStbBaseSetup is Test {
   struct UStbDeploymentAddresses {
     address proxyAddress;
@@ -74,7 +73,7 @@ contract UStbBaseSetup is Test {
   address constant _IMPLEMENTATION_OWNER = address(0x0000000000000000000000000000000000000001);
 
   SigUtils public sigUtils;
-  
+
   function setUp() public virtual {
     proxyAdminOwnerPrivateKey = 0xA21CE;
     UStbProxyStandardOwnerPrivateKey = 0xA11CE;
@@ -123,18 +122,15 @@ contract UStbBaseSetup is Test {
     UStbDeploymentAddressesInstance.proxyAddress = Upgrades.deployTransparentProxy(
       "UStb.sol",
       address(UStbDeploymentAddressesInstance.proxyAdminAddress),
-      abi.encodeCall(
-        UStb.initialize, (newOwner, minter_contract))
+      abi.encodeCall(UStb.initialize, (newOwner, minter_contract))
     );
-    
 
     UStbContractAsProxy = ITransparentUpgradeableProxy(payable(UStbDeploymentAddressesInstance.proxyAddress));
 
     UStbDeploymentAddressesInstance.UStbImplementation =
       Upgrades.getImplementationAddress(UStbDeploymentAddressesInstance.proxyAddress);
 
-    UStbDeploymentAddressesInstance.admin =
-    Upgrades.getAdminAddress(UStbDeploymentAddressesInstance.proxyAddress);
+    UStbDeploymentAddressesInstance.admin = Upgrades.getAdminAddress(UStbDeploymentAddressesInstance.proxyAddress);
 
     UStbContract = UStb(UStbDeploymentAddressesInstance.proxyAddress);
 
