@@ -52,7 +52,7 @@ contract UStbMinting is IUStbMinting, SingleAdminAccessControl, ReentrancyGuard 
   address private constant NATIVE_TOKEN = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
   /// @notice EIP712 name
-  bytes32 private constant EIP_712_NAME = keccak256("EthenaUStbMinting");
+  bytes32 private constant EIP_712_NAME = keccak256("UStbMinting");
 
   /// @notice holds EIP712 revision
   bytes32 private constant EIP712_REVISION = keccak256("1");
