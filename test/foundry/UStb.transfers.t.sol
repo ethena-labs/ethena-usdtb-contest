@@ -1403,19 +1403,6 @@ contract UStbTransferTest is UStbBaseSetup {
   function testTransferStateWhitelistEnabledFail3() public {
     vm.startPrank(newOwner);
     UStbContract.updateTransferState(IUStbDefinitions.TransferState.WHITELIST_ENABLED);
-    UStbContract.grantRole(WHITELISTED_ROLE, bob);
-    UStbContract.grantRole(WHITELISTED_ROLE, greg);
-    UStbContract.grantRole(BLACKLISTED_ROLE, bob);
-    UStbContract.grantRole(BLACKLISTED_ROLE, greg);
-    vm.stopPrank();
-    vm.startPrank(bob);
-    vm.expectRevert();
-    UStbContract.transfer(greg, _transferAmount);
-  }
-
-  function testTransferStateWhitelistEnabledFail4() public {
-    vm.startPrank(newOwner);
-    UStbContract.updateTransferState(IUStbDefinitions.TransferState.WHITELIST_ENABLED);
     UStbContract.grantRole(BLACKLISTED_ROLE, bob);
     UStbContract.grantRole(WHITELISTED_ROLE, greg);
     vm.stopPrank();

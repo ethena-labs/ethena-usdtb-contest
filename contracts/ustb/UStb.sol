@@ -72,6 +72,7 @@ contract UStb is
    */
   function addBlacklistAddress(address[] calldata users) external onlyRole(BLACKLIST_MANAGER_ROLE) {
     for (uint8 i = 0; i < users.length; i++) {
+      if (hasRole(WHITELISTED_ROLE, users[i])) _revokeRole(WHITELISTED_ROLE, users[i]);
       _grantRole(BLACKLISTED_ROLE, users[i]);
     }
   }
@@ -90,7 +91,7 @@ contract UStb is
    */
   function addWhitelistAddress(address[] calldata users) external onlyRole(WHITELIST_MANAGER_ROLE) {
     for (uint8 i = 0; i < users.length; i++) {
-      _grantRole(WHITELISTED_ROLE, users[i]);
+        if (!hasRole(BLACKLISTED_ROLE, users[i])) _grantRole(WHITELISTED_ROLE, users[i]);
     }
   }
 
@@ -190,9 +191,7 @@ contract UStb is
         // whitelisted user can burn
       } else if (
         hasRole(WHITELISTED_ROLE, msg.sender) && hasRole(WHITELISTED_ROLE, from) && hasRole(WHITELISTED_ROLE, to)
-          && !hasRole(BLACKLISTED_ROLE, msg.sender) && !hasRole(BLACKLISTED_ROLE, from) && !hasRole(BLACKLISTED_ROLE, to)
       ) {
-        // n.b. an address can be whitelisted and blacklisted at the same time
         // normal case
       } else {
         revert OperationNotAllowed();
