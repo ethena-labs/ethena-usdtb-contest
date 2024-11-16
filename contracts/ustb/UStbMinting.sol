@@ -158,7 +158,7 @@ contract UStbMinting is IUStbMinting, SingleAdminAccessControl, ReentrancyGuard 
     GlobalConfig memory _globalConfig,
     address[] memory _custodians,
     address _admin
-  ) {
+  ) ReentrancyGuard() {
     if (_tokenConfig.length == 0) revert NoAssetsProvided();
     if (_assets.length == 0) revert NoAssetsProvided();
     if (_admin == address(0)) revert InvalidZeroAddress();
