@@ -17,7 +17,7 @@ A set of addresses that are whitelisted for the purpose of transfer restrictions
 
 #### 2. Blacklisting
 
-A set of addresses that are blacklisted for the purpose of transfer restrictions. In any case blacklisted addresses cannot send or receive tokens, apart from burning their tokens. Only the blacklist manager specified by the admin can add or remove blacklisted addresses.
+A set of addresses that are blacklisted for the purpose of transfer restrictions. In any case blacklisted addresses cannot send or receive tokens. Only the blacklist manager specified by the admin can add or remove blacklisted addresses.
 
 #### 3. Token Redistribution
 
@@ -27,9 +27,9 @@ Allows the admin to forcefully move tokens from a blacklisted address to a non-b
 
 The admin address can change the state at any time, without a timelock. There are three main transfer states to consider:
 
-- **FULLY_DISABLED**: No holder of this token, whether whitelisted, blacklisted or otherwise can send or receive this token.
-- **WHITELIST_ENABLED**: Only whitelisted addresses can send and receive this token.
-- **FULLY_ENABLED**: Only non-blacklisted addresses can send and receive this token.
+- `FULLY_DISABLED`: No holder of this token, whether whitelisted, blacklisted or otherwise can send or receive this token.
+- `WHITELIST_ENABLED`: Only whitelisted addresses can send and receive this token.
+- `FULLY_ENABLED`: Only non-blacklisted addresses can send and receive this token.
 
 ## UStb minting features
 
@@ -58,3 +58,7 @@ An address holding collateral assets (benefactor) for a minting instruction that
 #### 6. Beneficiary
 
 An address holding collateral assets (benefactor) for a minting instruction can assign a different address (beneficiary) to receive UStb.
+
+#### 6. TokenType
+
+A collateral can be assigned `STABLE` or `ASSET` token type. Depending on the token type `verifyStablesLimit` will be called during minting/redeeming operations which provide restrictions to price discrepencies in the order.
