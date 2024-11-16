@@ -182,7 +182,7 @@ contract UStbMinting is IUStbMinting, SingleAdminAccessControl, ReentrancyGuard 
 
     // Set the max mint/redeem limits per block for each asset
     for (uint128 k = 0; k < _tokenConfig.length;) {
-      if (tokenConfig[_assets[k]].isActive || _assets[k] == address(0) || _assets[k] == address(ustb)) {
+      if (tokenConfig[_assets[k]].isActive || _assets[k] == address(0)) {
         revert InvalidAssetAddress();
       }
       _setTokenConfig(_assets[k], _tokenConfig[k]);
@@ -564,7 +564,6 @@ contract UStbMinting is IUStbMinting, SingleAdminAccessControl, ReentrancyGuard 
       (bool success,) = (beneficiary).call{value: amount}("");
       if (!success) revert TransferFailed();
     } else {
-      if (!tokenConfig[asset].isActive) revert UnsupportedAsset();
       IERC20(asset).safeTransfer(beneficiary, amount);
     }
   }
