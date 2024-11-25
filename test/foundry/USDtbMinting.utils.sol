@@ -13,8 +13,8 @@ contract USDtbMintingUtils is USDtbMintingBaseSetup {
     (,, uint128 maxMintPerBlock,) = USDtbMintingContract.tokenConfig(address(stETHToken));
 
     vm.assume(excessiveMintAmount > (maxMintPerBlock));
-    (IUSDtbMinting.Order memory order, IUSDtbMinting.Signature memory takerSignature, IUSDtbMinting.Route memory route) =
-      mint_setup(excessiveMintAmount, _stETHToDeposit, stETHToken, 1, false);
+    (IUSDtbMinting.Order memory order, IUSDtbMinting.Signature memory takerSignature, IUSDtbMinting.Route memory route)
+    = mint_setup(excessiveMintAmount, _stETHToDeposit, stETHToken, 1, false);
 
     vm.prank(minter);
     vm.expectRevert(MaxMintPerBlockExceeded);
@@ -45,8 +45,8 @@ contract USDtbMintingUtils is USDtbMintingBaseSetup {
   }
 
   function executeMint(IERC20 collateralAsset) public {
-    (IUSDtbMinting.Order memory order, IUSDtbMinting.Signature memory takerSignature, IUSDtbMinting.Route memory route) =
-      mint_setup(_usdtbToMint, _stETHToDeposit, collateralAsset, 1, false);
+    (IUSDtbMinting.Order memory order, IUSDtbMinting.Signature memory takerSignature, IUSDtbMinting.Route memory route)
+    = mint_setup(_usdtbToMint, _stETHToDeposit, collateralAsset, 1, false);
 
     vm.prank(minter);
     USDtbMintingContract.mint(order, route, takerSignature);

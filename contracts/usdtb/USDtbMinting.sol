@@ -532,7 +532,8 @@ contract USDtbMinting is IUSDtbMinting, SingleAdminAccessControl, ReentrancyGuar
         : 10 ** (collateralDecimals - usdtbDecimals)
     );
 
-    normalizedCollateralAmount = usdtbDecimals > collateralDecimals ? collateralAmount * scale : collateralAmount / scale;
+    normalizedCollateralAmount =
+      usdtbDecimals > collateralDecimals ? collateralAmount * scale : collateralAmount / scale;
 
     uint128 difference = normalizedCollateralAmount > usdtbAmount
       ? normalizedCollateralAmount - usdtbAmount

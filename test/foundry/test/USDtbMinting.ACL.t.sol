@@ -30,8 +30,11 @@ contract USDtbMintingACLTest is USDtbMintingUtils {
   }
 
   function test_fuzz_notMinter_cannot_mint(address nonMinter) public {
-    (IUSDtbMinting.Order memory mintOrder, IUSDtbMinting.Signature memory takerSignature, IUSDtbMinting.Route memory route)
-    = mint_setup(_usdtbToMint, _stETHToDeposit, stETHToken, 1, false);
+    (
+      IUSDtbMinting.Order memory mintOrder,
+      IUSDtbMinting.Signature memory takerSignature,
+      IUSDtbMinting.Route memory route
+    ) = mint_setup(_usdtbToMint, _stETHToDeposit, stETHToken, 1, false);
 
     vm.assume(nonMinter != minter);
     vm.startPrank(nonMinter);
@@ -242,8 +245,8 @@ contract USDtbMintingACLTest is USDtbMintingUtils {
     vm.startPrank(gatekeeper);
     USDtbMintingContract.disableMintRedeem();
 
-    (IUSDtbMinting.Order memory order, IUSDtbMinting.Signature memory takerSignature, IUSDtbMinting.Route memory route) =
-      mint_setup(_usdtbToMint, _stETHToDeposit, stETHToken, 1, false);
+    (IUSDtbMinting.Order memory order, IUSDtbMinting.Signature memory takerSignature, IUSDtbMinting.Route memory route)
+    = mint_setup(_usdtbToMint, _stETHToDeposit, stETHToken, 1, false);
 
     vm.prank(minter);
     vm.expectRevert(GlobalMaxMintPerBlockExceeded);

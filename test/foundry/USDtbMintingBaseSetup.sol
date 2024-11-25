@@ -475,8 +475,11 @@ contract USDtbMintingBaseSetup is Test, IUSDtbMintingEvents, IUSDtbDefinitions {
     uint128 nonce,
     bool multipleRedeem
   ) public returns (IUSDtbMinting.Order memory redeemOrder, IUSDtbMinting.Signature memory takerSignature2) {
-    (IUSDtbMinting.Order memory mintOrder, IUSDtbMinting.Signature memory takerSignature, IUSDtbMinting.Route memory route)
-    = mint_setup(usdtbAmount, collateralAmount, collateralAsset, nonce, true);
+    (
+      IUSDtbMinting.Order memory mintOrder,
+      IUSDtbMinting.Signature memory takerSignature,
+      IUSDtbMinting.Route memory route
+    ) = mint_setup(usdtbAmount, collateralAmount, collateralAsset, nonce, true);
 
     vm.prank(minter);
     USDtbMintingContract.mint(mintOrder, route, takerSignature);

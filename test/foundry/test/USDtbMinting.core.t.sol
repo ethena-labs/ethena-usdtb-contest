@@ -114,8 +114,8 @@ contract USDtbMintingCoreTest is USDtbMintingUtils {
   function test_fuzz_mint_noSlippage(uint128 expectedAmount) public {
     vm.assume(expectedAmount > 0 && expectedAmount < _maxMintPerBlock);
 
-    (IUSDtbMinting.Order memory order, IUSDtbMinting.Signature memory takerSignature, IUSDtbMinting.Route memory route) =
-      mint_setup(expectedAmount, _stETHToDeposit, stETHToken, 1, false);
+    (IUSDtbMinting.Order memory order, IUSDtbMinting.Signature memory takerSignature, IUSDtbMinting.Route memory route)
+    = mint_setup(expectedAmount, _stETHToDeposit, stETHToken, 1, false);
 
     vm.recordLogs();
     vm.prank(minter);
@@ -364,8 +364,8 @@ contract USDtbMintingCoreTest is USDtbMintingUtils {
   }
 
   function test_expired_orders_revert() public {
-    (IUSDtbMinting.Order memory order, IUSDtbMinting.Signature memory takerSignature, IUSDtbMinting.Route memory route) =
-      mint_setup(_usdtbToMint, _stETHToDeposit, stETHToken, 1, false);
+    (IUSDtbMinting.Order memory order, IUSDtbMinting.Signature memory takerSignature, IUSDtbMinting.Route memory route)
+    = mint_setup(_usdtbToMint, _stETHToDeposit, stETHToken, 1, false);
 
     vm.warp(block.timestamp + 11 minutes);
 
