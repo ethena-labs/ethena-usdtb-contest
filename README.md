@@ -1,13 +1,13 @@
-# UStb token and minting
+# USDtb token and minting
 
 Contracts in scope:
 
 1) `contracts/SingleAdminAccessControl.sol`
 2) `contracts/SingleAdminAccessControlUpgradeable.sol`
-3) `contracts/ustb/UStb.sol`
-4) `contracts/ustb/UStbMinting.sol`
+3) `contracts/usdtb/USDtb.sol`
+4) `contracts/usdtb/USDtbMinting.sol`
 
-## UStb token features
+## USDtb token features
 
 **Overview**: An upgradeable ERC20 with mint and burn functionality and various transfer states that is controlled by a single admin address.
 
@@ -31,17 +31,17 @@ The admin address can change the state at any time, without a timelock. There ar
 - `WHITELIST_ENABLED`: Only whitelisted addresses can send and receive this token.
 - `FULLY_ENABLED`: Only non-blacklisted addresses can send and receive this token.
 
-## UStb minting features
+## USDtb minting features
 
-**Overview**: A contract defining the operations to mint and redeem UStb tokens based on signed orders that is controlled by a single admin. The price present in any mint/redeem orders are determined by an off-chain RFQ system controlled by Ethena, which a benefactor may accept and sign an order for. The minter/redeemer then has last look rights to be able to filter out any malicious orders and proceed with on-chain settlement.
+**Overview**: A contract defining the operations to mint and redeem USDtb tokens based on signed orders that is controlled by a single admin. The price present in any mint/redeem orders are determined by an off-chain RFQ system controlled by Ethena, which a benefactor may accept and sign an order for. The minter/redeemer then has last look rights to be able to filter out any malicious orders and proceed with on-chain settlement.
 
 #### 1. Max mint/redeem per block by collateral
 
-Implements the max amount of UStb that can be minted/redeemed in a single block using a certain type of collateral. The limit can be adjusted by the admin on a per collateral basis, regardless whether the collateral is active or not.
+Implements the max amount of USDtb that can be minted/redeemed in a single block using a certain type of collateral. The limit can be adjusted by the admin on a per collateral basis, regardless whether the collateral is active or not.
 
 #### 2. Global max mint/redeem per block
 
-In addition to mint/redeem limits by collateral, there is a global mint/redeem per block configuration that caps the amount of UStb that can be minted in a single block, regardless of the collateral used to mint UStb. The admin can adjust this configurations, regardless whether the collateral is active or not.
+In addition to mint/redeem limits by collateral, there is a global mint/redeem per block configuration that caps the amount of USDtb that can be minted in a single block, regardless of the collateral used to mint USDtb. The admin can adjust this configurations, regardless whether the collateral is active or not.
 
 #### 3. Delegate signer
 
@@ -53,11 +53,11 @@ Custodians are the only addresses that can receive collateral assets from the mi
 
 #### 5. Benefactor
 
-An address holding collateral assets (benefactor) for a minting instruction that can receive UStb from the minting process. Benefactors are entities that have undergone KYC with Ethena and have been expressly registered by the admin to be able to participate in mint/redeem operations.
+An address holding collateral assets (benefactor) for a minting instruction that can receive USDtb from the minting process. Benefactors are entities that have undergone KYC with Ethena and have been expressly registered by the admin to be able to participate in mint/redeem operations.
 
 #### 6. Beneficiary
 
-An address holding collateral assets (benefactor) for a minting instruction can assign a different address (beneficiary) to receive UStb.
+An address holding collateral assets (benefactor) for a minting instruction can assign a different address (beneficiary) to receive USDtb.
 
 #### 6. TokenType
 

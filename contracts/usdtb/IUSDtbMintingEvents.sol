@@ -3,11 +3,11 @@ pragma solidity 0.8.26;
 
 /* solhint-disable var-name-mixedcase  */
 
-interface IUStbMintingEvents {
+interface IUSDtbMintingEvents {
   /// @notice Event emitted when contract receives ETH
   event Received(address, uint256);
 
-  /// @notice Event emitted when UStb is minted
+  /// @notice Event emitted when USDtb is minted
   event Mint(
     string indexed order_id,
     address indexed benefactor,
@@ -15,7 +15,7 @@ interface IUStbMintingEvents {
     address minter,
     address collateral_asset,
     uint256 collateral_amount,
-    uint256 ustb_amount
+    uint256 usdtb_amount
   );
 
   /// @notice Event emitted when funds are redeemed
@@ -26,7 +26,7 @@ interface IUStbMintingEvents {
     address redeemer,
     address collateral_asset,
     uint256 collateral_amount,
-    uint256 ustb_amount
+    uint256 usdtb_amount
   );
 
   /// @notice Event emitted when a supported asset is added
@@ -56,8 +56,8 @@ interface IUStbMintingEvents {
   /// @notice Event emitted when assets are moved to custody provider wallet
   event CustodyTransfer(address indexed wallet, address indexed asset, uint256 amount);
 
-  /// @notice Event emitted when UStb is set
-  event UStbSet(address indexed UStb);
+  /// @notice Event emitted when USDtb is set
+  event USDtbSet(address indexed USDtb);
 
   /// @notice Event emitted when the max mint per block is changed
   event MaxMintPerBlockChanged(uint256 oldMaxMintPerBlock, uint256 newMaxMintPerBlock, address indexed asset);

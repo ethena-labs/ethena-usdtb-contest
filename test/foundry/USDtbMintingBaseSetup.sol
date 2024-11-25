@@ -12,28 +12,28 @@ import {Utils} from "../utils/Utils.sol";
 import {Upgrades} from "../../contracts/lib/Upgrades.sol";
 
 import "../../contracts/mock/MockToken.sol";
-import "../../contracts/ustb/UStb.sol";
-import "../../contracts/ustb/IUStbMinting.sol";
-import "../../contracts/ustb/IUStbMintingEvents.sol";
-import "../../contracts/ustb/UStbMinting.sol";
+import "../../contracts/usdtb/USDtb.sol";
+import "../../contracts/usdtb/IUSDtbMinting.sol";
+import "../../contracts/usdtb/IUSDtbMintingEvents.sol";
+import "../../contracts/usdtb/USDtbMinting.sol";
 import "../../contracts/interfaces/ISingleAdminAccessControl.sol";
-import "../../contracts/ustb/IUStbDefinitions.sol";
+import "../../contracts/usdtb/IUSDtbDefinitions.sol";
 import "../../contracts/mock/MockMultisigWallet.sol";
-import "../../contracts/ustb/IUStbDefinitions.sol";
+import "../../contracts/usdtb/IUSDtbDefinitions.sol";
 
-contract UStbMintingBaseSetup is Test, IUStbMintingEvents, IUStbDefinitions {
+contract USDtbMintingBaseSetup is Test, IUSDtbMintingEvents, IUSDtbDefinitions {
   Utils internal utils;
 
-  struct UStbDeploymentAddresses {
+  struct USDtbDeploymentAddresses {
     address proxyAddress;
-    address UStbImplementation;
+    address USDtbImplementation;
     address admin;
     address proxyAdminAddress;
   }
 
-  UStb internal ustbToken;
-  UStbDeploymentAddresses internal UStbDeploymentAddressesInstance;
-  ITransparentUpgradeableProxy internal UStbContractAsProxy;
+  USDtb internal usdtbToken;
+  USDtbDeploymentAddresses internal USDtbDeploymentAddressesInstance;
+  ITransparentUpgradeableProxy internal USDtbContractAsProxy;
   ProxyAdmin proxyAdminContract;
 
   MockToken internal stETHToken;
@@ -42,14 +42,14 @@ contract UStbMintingBaseSetup is Test, IUStbMintingEvents, IUStbDefinitions {
   MockToken internal USDCToken;
   MockToken internal USDTToken;
   MockToken internal token;
-  UStbMinting internal UStbMintingContract;
+  USDtbMinting internal USDtbMintingContract;
   MockMultiSigWallet internal MultiSigWalletBenefactor;
   SigUtils internal sigUtils;
-  SigUtils internal sigUtilsUStb;
+  SigUtils internal sigUtilsUSDtb;
 
   uint256 internal proxyAdminOwnerPrivateKey;
-  uint256 internal UStbDeployerPrivateKey;
-  uint256 internal UStbProxyStandardOwnerPrivateKey;
+  uint256 internal USDtbDeployerPrivateKey;
+  uint256 internal USDtbProxyStandardOwnerPrivateKey;
   uint256 internal ownerPrivateKey;
   uint256 internal newOwnerPrivateKey;
   uint256 internal minterPrivateKey;
@@ -71,8 +71,8 @@ contract UStbMintingBaseSetup is Test, IUStbMintingEvents, IUStbDefinitions {
   uint256 internal smartContractSigner3PrivateKey;
 
   address internal proxyAdminOwner;
-  address internal UStbProxyStandardOwner;
-  address internal UStbDeployerAddresses;
+  address internal USDtbProxyStandardOwner;
+  address internal USDtbDeployerAddresses;
   address internal owner;
   address internal newOwner;
   address internal minter;
@@ -96,11 +96,11 @@ contract UStbMintingBaseSetup is Test, IUStbMintingEvents, IUStbDefinitions {
 
   address[] assets;
   address[] custodians;
-  IUStbMinting.TokenConfig[] tokenConfig;
-  IUStbMinting.GlobalConfig globalConfig;
+  IUSDtbMinting.TokenConfig[] tokenConfig;
+  IUSDtbMinting.GlobalConfig globalConfig;
 
-  IUStbMinting.TokenConfig stableConfig;
-  IUStbMinting.TokenConfig assetConfig;
+  IUSDtbMinting.TokenConfig stableConfig;
+  IUSDtbMinting.TokenConfig assetConfig;
 
   address internal NATIVE_TOKEN = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
@@ -113,44 +113,44 @@ contract UStbMintingBaseSetup is Test, IUStbMintingEvents, IUStbDefinitions {
   bytes32 internal smartContractSignerRole = keccak256("SMART_CONTRACT_SIGNER_ROLE");
 
   // error encodings
-  bytes internal InvalidAddress = abi.encodeWithSelector(IUStbMinting.InvalidAddress.selector);
-  bytes internal InvalidAssetAddress = abi.encodeWithSelector(IUStbMinting.InvalidAssetAddress.selector);
-  bytes internal InvalidOrder = abi.encodeWithSelector(IUStbMinting.InvalidOrder.selector);
-  bytes internal InvalidAmount = abi.encodeWithSelector(IUStbMinting.InvalidAmount.selector);
-  bytes internal InvalidRoute = abi.encodeWithSelector(IUStbMinting.InvalidRoute.selector);
-  bytes internal InvalidStablePrice = abi.encodeWithSelector(IUStbMinting.InvalidStablePrice.selector);
+  bytes internal InvalidAddress = abi.encodeWithSelector(IUSDtbMinting.InvalidAddress.selector);
+  bytes internal InvalidAssetAddress = abi.encodeWithSelector(IUSDtbMinting.InvalidAssetAddress.selector);
+  bytes internal InvalidOrder = abi.encodeWithSelector(IUSDtbMinting.InvalidOrder.selector);
+  bytes internal InvalidAmount = abi.encodeWithSelector(IUSDtbMinting.InvalidAmount.selector);
+  bytes internal InvalidRoute = abi.encodeWithSelector(IUSDtbMinting.InvalidRoute.selector);
+  bytes internal InvalidStablePrice = abi.encodeWithSelector(IUSDtbMinting.InvalidStablePrice.selector);
   bytes internal InvalidAdminChange = abi.encodeWithSelector(ISingleAdminAccessControl.InvalidAdminChange.selector);
-  bytes internal UnsupportedAsset = abi.encodeWithSelector(IUStbMinting.UnsupportedAsset.selector);
-  bytes internal BenefactorNotWhitelisted = abi.encodeWithSelector(IUStbMinting.BenefactorNotWhitelisted.selector);
-  bytes internal BeneficiaryNotApproved = abi.encodeWithSelector(IUStbMinting.BeneficiaryNotApproved.selector);
-  bytes internal InvalidEIP712Signature = abi.encodeWithSelector(IUStbMinting.InvalidEIP712Signature.selector);
-  bytes internal InvalidEIP1271Signature = abi.encodeWithSelector(IUStbMinting.InvalidEIP1271Signature.selector);
-  bytes internal InvalidNonce = abi.encodeWithSelector(IUStbMinting.InvalidNonce.selector);
-  bytes internal SignatureExpired = abi.encodeWithSelector(IUStbMinting.SignatureExpired.selector);
-  bytes internal MaxMintPerBlockExceeded = abi.encodeWithSelector(IUStbMinting.MaxMintPerBlockExceeded.selector);
-  bytes internal MaxRedeemPerBlockExceeded = abi.encodeWithSelector(IUStbMinting.MaxRedeemPerBlockExceeded.selector);
+  bytes internal UnsupportedAsset = abi.encodeWithSelector(IUSDtbMinting.UnsupportedAsset.selector);
+  bytes internal BenefactorNotWhitelisted = abi.encodeWithSelector(IUSDtbMinting.BenefactorNotWhitelisted.selector);
+  bytes internal BeneficiaryNotApproved = abi.encodeWithSelector(IUSDtbMinting.BeneficiaryNotApproved.selector);
+  bytes internal InvalidEIP712Signature = abi.encodeWithSelector(IUSDtbMinting.InvalidEIP712Signature.selector);
+  bytes internal InvalidEIP1271Signature = abi.encodeWithSelector(IUSDtbMinting.InvalidEIP1271Signature.selector);
+  bytes internal InvalidNonce = abi.encodeWithSelector(IUSDtbMinting.InvalidNonce.selector);
+  bytes internal SignatureExpired = abi.encodeWithSelector(IUSDtbMinting.SignatureExpired.selector);
+  bytes internal MaxMintPerBlockExceeded = abi.encodeWithSelector(IUSDtbMinting.MaxMintPerBlockExceeded.selector);
+  bytes internal MaxRedeemPerBlockExceeded = abi.encodeWithSelector(IUSDtbMinting.MaxRedeemPerBlockExceeded.selector);
   bytes internal GlobalMaxMintPerBlockExceeded =
-    abi.encodeWithSelector(IUStbMinting.GlobalMaxMintPerBlockExceeded.selector);
+    abi.encodeWithSelector(IUSDtbMinting.GlobalMaxMintPerBlockExceeded.selector);
   bytes internal GlobalMaxRedeemPerBlockExceeded =
-    abi.encodeWithSelector(IUStbMinting.GlobalMaxRedeemPerBlockExceeded.selector);
+    abi.encodeWithSelector(IUSDtbMinting.GlobalMaxRedeemPerBlockExceeded.selector);
 
-  // UStb error encodings
-  bytes internal ZeroAddressExceptionErr = abi.encodeWithSelector(IUStbDefinitions.ZeroAddressException.selector);
-  bytes internal CantRenounceOwnershipErr = abi.encodeWithSelector(IUStbDefinitions.CantRenounceOwnership.selector);
+  // USDtb error encodings
+  bytes internal ZeroAddressExceptionErr = abi.encodeWithSelector(IUSDtbDefinitions.ZeroAddressException.selector);
+  bytes internal CantRenounceOwnershipErr = abi.encodeWithSelector(IUSDtbDefinitions.CantRenounceOwnership.selector);
 
   bytes32 internal constant ROUTE_TYPE = keccak256("Route(address[] addresses,uint128[] ratios)");
   bytes32 internal constant ORDER_TYPE = keccak256(
-    "Order(uint128 expiry,uint128 nonce,address benefactor,address beneficiary,address asset,uint128 collateral_amount,uint128 ustb_amount)"
+    "Order(uint128 expiry,uint128 nonce,address benefactor,address beneficiary,address asset,uint128 collateral_amount,uint128 usdtb_amount)"
   );
 
   uint128 internal _slippageRange = 50000000000000000;
   uint128 internal _stETHToDeposit = 50 * 10 ** 18;
   uint128 internal _stETHToWithdraw = 30 * 10 ** 18;
-  uint128 internal _ustbToMint = 8.75 * 10 ** 23;
+  uint128 internal _usdtbToMint = 8.75 * 10 ** 23;
   uint128 internal _maxMintPerBlock = 10e23;
   uint128 internal _maxRedeemPerBlock = _maxMintPerBlock;
 
-  uint128 MAX_USDE_MINT_AND_REDEEM_PER_BLOCK = 2000000 * 10 ** 18; // 1 million UStb
+  uint128 MAX_USDE_MINT_AND_REDEEM_PER_BLOCK = 2000000 * 10 ** 18; // 1 million USDtb
   uint128 ASSET_MAX_USTB_MINT_AND_REDEEM_PER_BLOCK = 1000000 * 10 ** 18;
   uint128 STABLE_MAX_USTB_MINT_AND_REDEEM_PER_BLOCK = 1000000 * 10 ** 18;
 
@@ -159,7 +159,7 @@ contract UStbMintingBaseSetup is Test, IUStbMintingEvents, IUStbDefinitions {
 
   // Declared at contract level to avoid stack too deep
   SigUtils.Permit public permit;
-  IUStbMinting.Order public mint;
+  IUSDtbMinting.Order public mint;
 
   /// @notice packs r, s, v into signature bytes
   function _packRsv(bytes32 r, bytes32 s, uint8 v) internal pure returns (bytes memory) {
@@ -192,8 +192,8 @@ contract UStbMintingBaseSetup is Test, IUStbMintingEvents, IUStbDefinitions {
     assets[5] = NATIVE_TOKEN;
 
     proxyAdminOwnerPrivateKey = 0xA21CE;
-    UStbProxyStandardOwnerPrivateKey = 0xA11CE;
-    UStbDeployerPrivateKey = 0xA14DE;
+    USDtbProxyStandardOwnerPrivateKey = 0xA11CE;
+    USDtbDeployerPrivateKey = 0xA14DE;
     ownerPrivateKey = 0xA11CE;
     newOwnerPrivateKey = 0xA14CE;
     minterPrivateKey = 0xB44DE;
@@ -215,8 +215,8 @@ contract UStbMintingBaseSetup is Test, IUStbMintingEvents, IUStbDefinitions {
     smartContractSigner3PrivateKey = 0x1DE2D;
 
     proxyAdminOwner = vm.addr(proxyAdminOwnerPrivateKey);
-    UStbProxyStandardOwner = vm.addr(UStbProxyStandardOwnerPrivateKey);
-    UStbDeployerAddresses = vm.addr(UStbDeployerPrivateKey);
+    USDtbProxyStandardOwner = vm.addr(USDtbProxyStandardOwnerPrivateKey);
+    USDtbDeployerAddresses = vm.addr(USDtbDeployerPrivateKey);
     owner = vm.addr(ownerPrivateKey);
     newOwner = vm.addr(newOwnerPrivateKey);
     minter = vm.addr(minterPrivateKey);
@@ -261,8 +261,8 @@ contract UStbMintingBaseSetup is Test, IUStbMintingEvents, IUStbDefinitions {
 
     for (uint256 i = 0; i <= 1; i++) {
       tokenConfig.push(
-        IUStbMinting.TokenConfig({
-          tokenType: IUStbMinting.TokenType.STABLE,
+        IUSDtbMinting.TokenConfig({
+          tokenType: IUSDtbMinting.TokenType.STABLE,
           maxMintPerBlock: STABLE_MAX_USTB_MINT_AND_REDEEM_PER_BLOCK,
           maxRedeemPerBlock: STABLE_MAX_USTB_MINT_AND_REDEEM_PER_BLOCK,
           isActive: true
@@ -272,8 +272,8 @@ contract UStbMintingBaseSetup is Test, IUStbMintingEvents, IUStbDefinitions {
 
     for (uint256 j = 2; j <= 5; j++) {
       tokenConfig.push(
-        IUStbMinting.TokenConfig({
-          tokenType: IUStbMinting.TokenType.ASSET,
+        IUSDtbMinting.TokenConfig({
+          tokenType: IUSDtbMinting.TokenType.ASSET,
           maxMintPerBlock: ASSET_MAX_USTB_MINT_AND_REDEEM_PER_BLOCK,
           maxRedeemPerBlock: ASSET_MAX_USTB_MINT_AND_REDEEM_PER_BLOCK,
           isActive: true
@@ -281,45 +281,45 @@ contract UStbMintingBaseSetup is Test, IUStbMintingEvents, IUStbDefinitions {
       );
     }
 
-    stableConfig = IUStbMinting.TokenConfig({
-      tokenType: IUStbMinting.TokenType.STABLE,
+    stableConfig = IUSDtbMinting.TokenConfig({
+      tokenType: IUSDtbMinting.TokenType.STABLE,
       maxMintPerBlock: STABLE_MAX_USTB_MINT_AND_REDEEM_PER_BLOCK,
       maxRedeemPerBlock: STABLE_MAX_USTB_MINT_AND_REDEEM_PER_BLOCK,
       isActive: true
     });
-    assetConfig = IUStbMinting.TokenConfig({
-      tokenType: IUStbMinting.TokenType.ASSET,
+    assetConfig = IUSDtbMinting.TokenConfig({
+      tokenType: IUSDtbMinting.TokenType.ASSET,
       maxMintPerBlock: ASSET_MAX_USTB_MINT_AND_REDEEM_PER_BLOCK,
       maxRedeemPerBlock: ASSET_MAX_USTB_MINT_AND_REDEEM_PER_BLOCK,
       isActive: true
     });
 
-    globalConfig = IUStbMinting.GlobalConfig(MAX_USDE_MINT_AND_REDEEM_PER_BLOCK, MAX_USDE_MINT_AND_REDEEM_PER_BLOCK);
+    globalConfig = IUSDtbMinting.GlobalConfig(MAX_USDE_MINT_AND_REDEEM_PER_BLOCK, MAX_USDE_MINT_AND_REDEEM_PER_BLOCK);
 
     // Set the roles
     vm.startPrank(owner);
-    UStbMintingContract = new UStbMinting(assets, tokenConfig, globalConfig, custodians, owner);
+    USDtbMintingContract = new USDtbMinting(assets, tokenConfig, globalConfig, custodians, owner);
 
-    UStbMintingContract.setStablesDeltaLimit(100);
+    USDtbMintingContract.setStablesDeltaLimit(100);
 
-    UStbMintingContract.grantRole(gatekeeperRole, gatekeeper);
-    UStbMintingContract.grantRole(redeemerRole, redeemer);
-    UStbMintingContract.grantRole(collateralManagerRole, collateralManager);
-    UStbMintingContract.grantRole(minterRole, minter);
+    USDtbMintingContract.grantRole(gatekeeperRole, gatekeeper);
+    USDtbMintingContract.grantRole(redeemerRole, redeemer);
+    USDtbMintingContract.grantRole(collateralManagerRole, collateralManager);
+    USDtbMintingContract.grantRole(minterRole, minter);
 
     // Multi Sig - Smart Contract Based Signing
     MultiSigWalletBenefactor = new MockMultiSigWallet(owner, smartContractSigner1, smartContractSigner2);
     mockMultiSigWallet = address(MultiSigWalletBenefactor);
 
-    UStbMintingContract.addWhitelistedBenefactor(benefactor);
-    UStbMintingContract.addWhitelistedBenefactor(beneficiary);
-    UStbMintingContract.addWhitelistedBenefactor(trader1);
-    UStbMintingContract.addWhitelistedBenefactor(trader2);
-    UStbMintingContract.addWhitelistedBenefactor(redeemer);
-    UStbMintingContract.addWhitelistedBenefactor(mockMultiSigWallet);
+    USDtbMintingContract.addWhitelistedBenefactor(benefactor);
+    USDtbMintingContract.addWhitelistedBenefactor(beneficiary);
+    USDtbMintingContract.addWhitelistedBenefactor(trader1);
+    USDtbMintingContract.addWhitelistedBenefactor(trader2);
+    USDtbMintingContract.addWhitelistedBenefactor(redeemer);
+    USDtbMintingContract.addWhitelistedBenefactor(mockMultiSigWallet);
 
     // Add self as approved custodian
-    UStbMintingContract.addCustodianAddress(address(UStbMintingContract));
+    USDtbMintingContract.addCustodianAddress(address(USDtbMintingContract));
 
     // Mock Multi Sig assigned a quorum of three signers forming a composite benefactor
     MultiSigWalletBenefactor.grantRole(smartContractSignerRole, smartContractSigner1);
@@ -331,33 +331,33 @@ contract UStbMintingBaseSetup is Test, IUStbMintingEvents, IUStbDefinitions {
     vm.stopPrank();
 
     vm.startPrank(beneficiary);
-    UStbMintingContract.setApprovedBeneficiary(beneficiary, true);
-    UStbMintingContract.setApprovedBeneficiary(benefactor, true);
+    USDtbMintingContract.setApprovedBeneficiary(beneficiary, true);
+    USDtbMintingContract.setApprovedBeneficiary(benefactor, true);
     vm.stopPrank();
 
     vm.startPrank(benefactor);
-    UStbMintingContract.setApprovedBeneficiary(beneficiary, true);
-    UStbMintingContract.setApprovedBeneficiary(benefactor, true);
-    UStbMintingContract.setApprovedBeneficiary(trader1, true);
-    UStbMintingContract.setApprovedBeneficiary(trader2, true);
-    UStbMintingContract.setApprovedBeneficiary(address(MultiSigWalletBenefactor), true);
+    USDtbMintingContract.setApprovedBeneficiary(beneficiary, true);
+    USDtbMintingContract.setApprovedBeneficiary(benefactor, true);
+    USDtbMintingContract.setApprovedBeneficiary(trader1, true);
+    USDtbMintingContract.setApprovedBeneficiary(trader2, true);
+    USDtbMintingContract.setApprovedBeneficiary(address(MultiSigWalletBenefactor), true);
     vm.stopPrank();
 
     vm.startPrank(redeemer);
-    UStbMintingContract.setApprovedBeneficiary(redeemer, true);
-    UStbMintingContract.setApprovedBeneficiary(beneficiary, true);
+    USDtbMintingContract.setApprovedBeneficiary(redeemer, true);
+    USDtbMintingContract.setApprovedBeneficiary(beneficiary, true);
     vm.stopPrank();
 
     vm.startPrank(address(MultiSigWalletBenefactor));
-    UStbMintingContract.setApprovedBeneficiary(mockMultiSigWallet, true);
-    UStbMintingContract.setApprovedBeneficiary(beneficiary, true);
+    USDtbMintingContract.setApprovedBeneficiary(mockMultiSigWallet, true);
+    USDtbMintingContract.setApprovedBeneficiary(beneficiary, true);
     vm.stopPrank();
 
-    // deploy UStb
+    // deploy USDtb
 
-    address deployerAddress = vm.addr(UStbDeployerPrivateKey);
+    address deployerAddress = vm.addr(USDtbDeployerPrivateKey);
 
-    vm.startBroadcast(UStbDeployerPrivateKey);
+    vm.startBroadcast(USDtbDeployerPrivateKey);
 
     proxyAdminContract = new ProxyAdmin();
 
@@ -366,27 +366,27 @@ contract UStbMintingBaseSetup is Test, IUStbMintingEvents, IUStbDefinitions {
       proxyAdminContract.transferOwnership(proxyAdminOwner);
     }
 
-    UStbDeploymentAddressesInstance.proxyAdminAddress = address(proxyAdminContract);
+    USDtbDeploymentAddressesInstance.proxyAdminAddress = address(proxyAdminContract);
 
-    UStbDeploymentAddressesInstance.proxyAddress = Upgrades.deployTransparentProxy(
-      "UStb.sol",
-      address(UStbDeploymentAddressesInstance.proxyAdminAddress),
-      abi.encodeCall(UStb.initialize, (newOwner, address(UStbMintingContract)))
+    USDtbDeploymentAddressesInstance.proxyAddress = Upgrades.deployTransparentProxy(
+      "USDtb.sol",
+      address(USDtbDeploymentAddressesInstance.proxyAdminAddress),
+      abi.encodeCall(USDtb.initialize, (newOwner, address(USDtbMintingContract)))
     );
 
-    UStbContractAsProxy = ITransparentUpgradeableProxy(payable(UStbDeploymentAddressesInstance.proxyAddress));
+    USDtbContractAsProxy = ITransparentUpgradeableProxy(payable(USDtbDeploymentAddressesInstance.proxyAddress));
 
-    UStbDeploymentAddressesInstance.UStbImplementation =
-      Upgrades.getImplementationAddress(UStbDeploymentAddressesInstance.proxyAddress);
+    USDtbDeploymentAddressesInstance.USDtbImplementation =
+      Upgrades.getImplementationAddress(USDtbDeploymentAddressesInstance.proxyAddress);
 
-    UStbDeploymentAddressesInstance.admin = Upgrades.getAdminAddress(UStbDeploymentAddressesInstance.proxyAddress);
+    USDtbDeploymentAddressesInstance.admin = Upgrades.getAdminAddress(USDtbDeploymentAddressesInstance.proxyAddress);
 
-    ustbToken = UStb(UStbDeploymentAddressesInstance.proxyAddress);
+    usdtbToken = USDtb(USDtbDeploymentAddressesInstance.proxyAddress);
     vm.stopBroadcast();
 
-    // Set UStb token as UStb Minting Token
+    // Set USDtb token as USDtb Minting Token
     vm.prank(owner);
-    UStbMintingContract.setUStbToken(IUStb(address(ustbToken)));
+    USDtbMintingContract.setUSDtbToken(IUSDtb(address(usdtbToken)));
   }
 
   function generateRandomOrderId() internal view returns (string memory) {
@@ -399,29 +399,29 @@ contract UStbMintingBaseSetup is Test, IUStbMintingEvents, IUStbDefinitions {
     return string(abi.encodePacked(ORDER_ID_PREFIX, randomChars));
   }
 
-  function _generateRouteTypeHash(IUStbMinting.Route memory route) internal pure returns (bytes32) {
+  function _generateRouteTypeHash(IUSDtbMinting.Route memory route) internal pure returns (bytes32) {
     return keccak256(
       abi.encode(ROUTE_TYPE, keccak256(abi.encodePacked(route.addresses)), keccak256(abi.encodePacked(route.ratios)))
     );
   }
 
-  function signOrder(uint256 key, bytes32 digest, IUStbMinting.SignatureType sigType)
+  function signOrder(uint256 key, bytes32 digest, IUSDtbMinting.SignatureType sigType)
     public
     pure
-    returns (IUStbMinting.Signature memory)
+    returns (IUSDtbMinting.Signature memory)
   {
     (uint8 v, bytes32 r, bytes32 s) = vm.sign(key, digest);
     bytes memory sigBytes = _packRsv(r, s, v);
 
-    IUStbMinting.Signature memory signature =
-      IUStbMinting.Signature({signature_type: sigType, signature_bytes: sigBytes});
+    IUSDtbMinting.Signature memory signature =
+      IUSDtbMinting.Signature({signature_type: sigType, signature_bytes: sigBytes});
 
     return signature;
   }
 
   // Generic mint setup reused in the tests to reduce lines of code
   function mint_setup(
-    uint128 ustbAmount,
+    uint128 usdtbAmount,
     uint128 collateralAmount,
     IERC20 collateralToken,
     uint128 nonce,
@@ -429,89 +429,89 @@ contract UStbMintingBaseSetup is Test, IUStbMintingEvents, IUStbDefinitions {
   )
     public
     returns (
-      IUStbMinting.Order memory order,
-      IUStbMinting.Signature memory takerSignature,
-      IUStbMinting.Route memory route
+      IUSDtbMinting.Order memory order,
+      IUSDtbMinting.Signature memory takerSignature,
+      IUSDtbMinting.Route memory route
     )
   {
-    order = IUStbMinting.Order({
-      order_type: IUStbMinting.OrderType.MINT,
+    order = IUSDtbMinting.Order({
+      order_type: IUSDtbMinting.OrderType.MINT,
       order_id: generateRandomOrderId(),
       expiry: uint120(uint128(block.timestamp + 10 minutes)),
       nonce: nonce,
       benefactor: benefactor,
       beneficiary: beneficiary,
       collateral_asset: address(collateralToken),
-      ustb_amount: ustbAmount,
+      usdtb_amount: usdtbAmount,
       collateral_amount: collateralAmount
     });
 
     address[] memory targets = new address[](1);
-    targets[0] = address(UStbMintingContract);
+    targets[0] = address(USDtbMintingContract);
 
     uint128[] memory ratios = new uint128[](1);
     ratios[0] = 10_000;
 
-    route = IUStbMinting.Route({addresses: targets, ratios: ratios});
+    route = IUSDtbMinting.Route({addresses: targets, ratios: ratios});
 
     vm.startPrank(benefactor);
-    bytes32 digest1 = UStbMintingContract.hashOrder(order);
-    takerSignature = signOrder(benefactorPrivateKey, digest1, IUStbMinting.SignatureType.EIP712);
-    collateralToken.approve(address(UStbMintingContract), collateralAmount);
+    bytes32 digest1 = USDtbMintingContract.hashOrder(order);
+    takerSignature = signOrder(benefactorPrivateKey, digest1, IUSDtbMinting.SignatureType.EIP712);
+    collateralToken.approve(address(USDtbMintingContract), collateralAmount);
     vm.stopPrank();
 
     if (!multipleMints) {
-      assertEq(ustbToken.balanceOf(beneficiary), 0, "Mismatch in UStb balance");
-      assertEq(collateralToken.balanceOf(address(UStbMintingContract)), 0, "Mismatch in collateral balance");
+      assertEq(usdtbToken.balanceOf(beneficiary), 0, "Mismatch in USDtb balance");
+      assertEq(collateralToken.balanceOf(address(USDtbMintingContract)), 0, "Mismatch in collateral balance");
       assertEq(collateralToken.balanceOf(benefactor), collateralAmount, "Mismatch in collateral balance");
     }
   }
 
   // Generic redeem setup reused in the tests to reduce lines of code
   function redeem_setup(
-    uint128 ustbAmount,
+    uint128 usdtbAmount,
     uint128 collateralAmount,
     IERC20 collateralAsset,
     uint128 nonce,
     bool multipleRedeem
-  ) public returns (IUStbMinting.Order memory redeemOrder, IUStbMinting.Signature memory takerSignature2) {
-    (IUStbMinting.Order memory mintOrder, IUStbMinting.Signature memory takerSignature, IUStbMinting.Route memory route)
-    = mint_setup(ustbAmount, collateralAmount, collateralAsset, nonce, true);
+  ) public returns (IUSDtbMinting.Order memory redeemOrder, IUSDtbMinting.Signature memory takerSignature2) {
+    (IUSDtbMinting.Order memory mintOrder, IUSDtbMinting.Signature memory takerSignature, IUSDtbMinting.Route memory route)
+    = mint_setup(usdtbAmount, collateralAmount, collateralAsset, nonce, true);
 
     vm.prank(minter);
-    UStbMintingContract.mint(mintOrder, route, takerSignature);
+    USDtbMintingContract.mint(mintOrder, route, takerSignature);
 
     //redeem
-    redeemOrder = IUStbMinting.Order({
-      order_type: IUStbMinting.OrderType.REDEEM,
+    redeemOrder = IUSDtbMinting.Order({
+      order_type: IUSDtbMinting.OrderType.REDEEM,
       order_id: generateRandomOrderId(),
       expiry: uint120(uint128(block.timestamp + 10 minutes)),
       nonce: nonce + 1,
       benefactor: beneficiary,
       beneficiary: beneficiary,
       collateral_asset: address(collateralAsset),
-      ustb_amount: ustbAmount,
+      usdtb_amount: usdtbAmount,
       collateral_amount: collateralAmount
     });
 
     // taker
     vm.startPrank(beneficiary);
-    ustbToken.approve(address(UStbMintingContract), ustbAmount);
+    usdtbToken.approve(address(USDtbMintingContract), usdtbAmount);
 
-    bytes32 digest3 = UStbMintingContract.hashOrder(redeemOrder);
-    takerSignature2 = signOrder(beneficiaryPrivateKey, digest3, IUStbMinting.SignatureType.EIP712);
+    bytes32 digest3 = USDtbMintingContract.hashOrder(redeemOrder);
+    takerSignature2 = signOrder(beneficiaryPrivateKey, digest3, IUSDtbMinting.SignatureType.EIP712);
     vm.stopPrank();
 
     vm.startPrank(owner);
-    UStbMintingContract.grantRole(redeemerRole, redeemer);
+    USDtbMintingContract.grantRole(redeemerRole, redeemer);
     vm.stopPrank();
 
     if (!multipleRedeem) {
       assertEq(
-        collateralAsset.balanceOf(address(UStbMintingContract)), collateralAmount, "Mismatch in collateral balance"
+        collateralAsset.balanceOf(address(USDtbMintingContract)), collateralAmount, "Mismatch in collateral balance"
       );
       assertEq(collateralAsset.balanceOf(beneficiary), 0, "Mismatch in collateral balance");
-      assertEq(ustbToken.balanceOf(beneficiary), ustbAmount, "Mismatch in UStb balance");
+      assertEq(usdtbToken.balanceOf(beneficiary), usdtbAmount, "Mismatch in USDtb balance");
     }
   }
 }

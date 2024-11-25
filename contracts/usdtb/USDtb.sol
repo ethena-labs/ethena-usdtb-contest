@@ -6,22 +6,22 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20Burnable
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "../SingleAdminAccessControlUpgradeable.sol";
-import "./IUStbDefinitions.sol";
+import "./IUSDtbDefinitions.sol";
 
 /**
- * @title UStb
- * @notice UStb rwa token contract
+ * @title USDtb
+ * @notice USDtb rwa token contract
  */
-contract UStb is
+contract USDtb is
   ERC20BurnableUpgradeable,
   ERC20PermitUpgradeable,
-  IUStbDefinitions,
+  IUSDtbDefinitions,
   ReentrancyGuardUpgradeable,
   SingleAdminAccessControlUpgradeable
 {
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
-  /// @notice The role is allowed to mint UStb. To be pointed to UStb minting contract only.
+  /// @notice The role is allowed to mint USDtb. To be pointed to USDtb minting contract only.
   bytes32 public constant MINTER_CONTRACT = keccak256("MINTER_CONTRACT");
   /// @notice Role that can handle Blacklisting, in addition to admin role.
   bytes32 public constant BLACKLIST_MANAGER_ROLE = keccak256("BLACKLIST_MANAGER_ROLE");
@@ -41,13 +41,13 @@ contract UStb is
 
   /* ------------- INITIALIZE ------------- */
   /**
-   * @notice Initializer for UStb contract.
+   * @notice Initializer for USDtb contract.
    * @param admin The address of the admin role.
-   * @param minterContract The initial minterContract. Only this address can mint UStb
+   * @param minterContract The initial minterContract. Only this address can mint USDtb
    */
   function initialize(address admin, address minterContract) public initializer {
-    __ERC20_init("UStb", "UStb");
-    __ERC20Permit_init("UStb");
+    __ERC20_init("USDtb", "USDtb");
+    __ERC20Permit_init("USDtb");
     __ReentrancyGuard_init();
     if (admin == address(0) || minterContract == address(0)) revert ZeroAddressException();
     transferState = TransferState.FULLY_ENABLED;
@@ -105,7 +105,7 @@ contract UStb is
   }
 
   /**
-   * @dev Burns the blacklisted user UStb and mints to the desired owner address.
+   * @dev Burns the blacklisted user USDtb and mints to the desired owner address.
    * @param from The address to burn the entire balance, with the BLACKLISTED_ROLE
    * @param to The address to mint the entire balance of "from" parameter.
    */
@@ -132,7 +132,7 @@ contract UStb is
   }
 
   /**
-   * @notice Mints new UStb tokens
+   * @notice Mints new USDtb tokens
    * @param to The address to mint tokens to
    * @param amount The amount of tokens to mint
    * @dev Only callable by MINTER_CONTRACT role
