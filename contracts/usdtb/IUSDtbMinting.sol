@@ -3,9 +3,9 @@ pragma solidity 0.8.26;
 
 /* solhint-disable var-name-mixedcase  */
 
-import "./IUStbMintingEvents.sol";
+import "./IUSDtbMintingEvents.sol";
 
-interface IUStbMinting is IUStbMintingEvents {
+interface IUSDtbMinting is IUSDtbMintingEvents {
   enum Role {
     Minter,
     Redeemer
@@ -51,7 +51,7 @@ interface IUStbMinting is IUStbMintingEvents {
     address beneficiary;
     address collateral_asset;
     uint128 collateral_amount;
-    uint128 ustb_amount;
+    uint128 usdtb_amount;
   }
 
   struct TokenConfig {
@@ -66,21 +66,21 @@ interface IUStbMinting is IUStbMintingEvents {
   }
 
   struct BlockTotals {
-    /// @notice UStb minted per block / per asset per block
+    /// @notice USDtb minted per block / per asset per block
     uint128 mintedPerBlock;
-    /// @notice UStb redeemed per block / per asset per block
+    /// @notice USDtb redeemed per block / per asset per block
     uint128 redeemedPerBlock;
   }
 
   struct GlobalConfig {
-    /// @notice max UStb that can be minted across all assets within a single block.
+    /// @notice max USDtb that can be minted across all assets within a single block.
     uint128 globalMaxMintPerBlock;
-    /// @notice max UStb that can be redeemed across all assets within a single block.
+    /// @notice max USDtb that can be redeemed across all assets within a single block.
     uint128 globalMaxRedeemPerBlock;
   }
 
   error InvalidAddress();
-  error InvalidUStbAddress();
+  error InvalidUSDtbAddress();
   error InvalidZeroAddress();
   error InvalidAssetAddress();
   error InvalidBenefactorAddress();
@@ -116,7 +116,7 @@ interface IUStbMinting is IUStbMintingEvents {
 
   function verifyStablesLimit(
     uint128 collateralAmount,
-    uint128 ustbAmount,
+    uint128 usdtbAmount,
     address collateralAsset,
     OrderType orderType
   ) external view returns (bool);

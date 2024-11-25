@@ -15,37 +15,37 @@ import "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.so
 import "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 
 import {Upgrades} from "../../contracts/lib/Upgrades.sol";
-import {UStb} from "../../contracts/ustb/UStb.sol";
-import {IUStb} from "../../contracts/ustb/IUStb.sol";
+import {USDtb} from "../../contracts/usdtb/USDtb.sol";
+import {IUSDtb} from "../../contracts/usdtb/IUSDtb.sol";
 
 import "../../test/utils/SigUtils.sol";
 
-contract UStbBaseSetup is Test {
-  struct UStbDeploymentAddresses {
+contract USDtbBaseSetup is Test {
+  struct USDtbDeploymentAddresses {
     address proxyAddress;
-    address UStbImplementation;
+    address USDtbImplementation;
     address admin;
     address proxyAdminAddress;
   }
 
-  UStbDeploymentAddresses internal UStbDeploymentAddressesInstance;
-  ITransparentUpgradeableProxy internal UStbContractAsProxy;
+  USDtbDeploymentAddresses internal USDtbDeploymentAddressesInstance;
+  ITransparentUpgradeableProxy internal USDtbContractAsProxy;
   ProxyAdmin proxyAdminContract;
-  UStb internal UStbContract;
+  USDtb internal USDtbContract;
 
   uint256 internal proxyAdminOwnerPrivateKey;
-  uint256 internal UStbProxyStandardOwnerPrivateKey;
+  uint256 internal USDtbProxyStandardOwnerPrivateKey;
   uint256 internal newOwnerPrivateKey;
   uint256 internal minterPrivateKey;
   uint256 internal bobPrivateKey;
   uint256 internal gregPrivateKey;
   uint256 internal randomerPrivateKey;
-  uint256 internal UStbDeployerPrivateKey;
+  uint256 internal USDtbDeployerPrivateKey;
   uint256 internal minterContractPrivateKey;
   uint256 internal alicePrivateKey;
 
   address internal proxyAdminOwner;
-  address internal UStbProxyStandardOwner;
+  address internal USDtbProxyStandardOwner;
   address internal newOwner;
   address internal minter_contract;
   address internal minter;
@@ -76,20 +76,20 @@ contract UStbBaseSetup is Test {
 
   function setUp() public virtual {
     proxyAdminOwnerPrivateKey = 0xA21CE;
-    UStbProxyStandardOwnerPrivateKey = 0xA11CE;
+    USDtbProxyStandardOwnerPrivateKey = 0xA11CE;
     newOwnerPrivateKey = 0xA14CE;
     minterPrivateKey = 0xB44DE;
     bobPrivateKey = 0x1DEA2;
     gregPrivateKey = 0x6ED;
     randomerPrivateKey = 0x1DECC;
     minterContractPrivateKey = 0x1DEA3;
-    UStbDeployerPrivateKey = uint256(keccak256(abi.encodePacked("UStbDeployer")));
+    USDtbDeployerPrivateKey = uint256(keccak256(abi.encodePacked("USDtbDeployer")));
     alicePrivateKey = 0xB44DE1;
 
     proxyAdminOwner = vm.addr(proxyAdminOwnerPrivateKey);
     // Wallet that is allowed to call the ownable methods of the implementation contract
     // this wallet is NOT the proxy admin owner who is allowed to call the proxy admin methods
-    UStbProxyStandardOwner = vm.addr(UStbProxyStandardOwnerPrivateKey);
+    USDtbProxyStandardOwner = vm.addr(USDtbProxyStandardOwnerPrivateKey);
     newOwner = vm.addr(newOwnerPrivateKey);
     minter = vm.addr(minterPrivateKey);
     bob = vm.addr(bobPrivateKey);
@@ -98,7 +98,7 @@ contract UStbBaseSetup is Test {
     alice = vm.addr(alicePrivateKey);
     minter_contract = vm.addr(minterContractPrivateKey);
 
-    vm.label(UStbProxyStandardOwner, "UStbProxyStandardOwner");
+    vm.label(USDtbProxyStandardOwner, "USDtbProxyStandardOwner");
     vm.label(bob, "bob");
     vm.label(randomer, "randomer");
     vm.label(greg, "greg");
@@ -106,9 +106,9 @@ contract UStbBaseSetup is Test {
     vm.label(proxyAdminOwner, "proxyAdminOwner");
     vm.label(alice, "alice");
 
-    address deployerAddress = vm.addr(UStbDeployerPrivateKey);
+    address deployerAddress = vm.addr(USDtbDeployerPrivateKey);
 
-    vm.startBroadcast(UStbDeployerPrivateKey);
+    vm.startBroadcast(USDtbDeployerPrivateKey);
 
     proxyAdminContract = new ProxyAdmin();
 
@@ -117,29 +117,29 @@ contract UStbBaseSetup is Test {
       proxyAdminContract.transferOwnership(proxyAdminOwner);
     }
 
-    UStbDeploymentAddressesInstance.proxyAdminAddress = address(proxyAdminContract);
+    USDtbDeploymentAddressesInstance.proxyAdminAddress = address(proxyAdminContract);
 
-    UStbDeploymentAddressesInstance.proxyAddress = Upgrades.deployTransparentProxy(
-      "UStb.sol",
-      address(UStbDeploymentAddressesInstance.proxyAdminAddress),
-      abi.encodeCall(UStb.initialize, (newOwner, minter_contract))
+    USDtbDeploymentAddressesInstance.proxyAddress = Upgrades.deployTransparentProxy(
+      "USDtb.sol",
+      address(USDtbDeploymentAddressesInstance.proxyAdminAddress),
+      abi.encodeCall(USDtb.initialize, (newOwner, minter_contract))
     );
 
-    UStbContractAsProxy = ITransparentUpgradeableProxy(payable(UStbDeploymentAddressesInstance.proxyAddress));
+    USDtbContractAsProxy = ITransparentUpgradeableProxy(payable(USDtbDeploymentAddressesInstance.proxyAddress));
 
-    UStbDeploymentAddressesInstance.UStbImplementation =
-      Upgrades.getImplementationAddress(UStbDeploymentAddressesInstance.proxyAddress);
+    USDtbDeploymentAddressesInstance.USDtbImplementation =
+      Upgrades.getImplementationAddress(USDtbDeploymentAddressesInstance.proxyAddress);
 
-    UStbDeploymentAddressesInstance.admin = Upgrades.getAdminAddress(UStbDeploymentAddressesInstance.proxyAddress);
+    USDtbDeploymentAddressesInstance.admin = Upgrades.getAdminAddress(USDtbDeploymentAddressesInstance.proxyAddress);
 
-    UStbContract = UStb(UStbDeploymentAddressesInstance.proxyAddress);
+    USDtbContract = USDtb(USDtbDeploymentAddressesInstance.proxyAddress);
 
     vm.stopBroadcast();
 
     vm.startPrank(minter_contract);
-    UStbContract.mint(alice, _amount);
-    UStbContract.mint(bob, _amount);
-    UStbContract.mint(greg, _amount);
+    USDtbContract.mint(alice, _amount);
+    USDtbContract.mint(bob, _amount);
+    USDtbContract.mint(greg, _amount);
     vm.stopPrank();
   }
 }
